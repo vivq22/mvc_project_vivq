@@ -27,7 +27,10 @@ class Category extends PublicController
             "selectedACT" => "",
             "selectedINA" => "",
             "selectedRTR" => "",
-            "errors" => []
+            "errors" => [],
+            "cancelLabel" => "Cancel",
+            "showConfirm" => true,
+            "readonly" => ""
         ];
         $this->modes = [
             "INS" => "New Category",
@@ -61,13 +64,10 @@ class Category extends PublicController
         if ($this->isPostBack()) {
             $this->getBodyData();
             if ($this->validateData()) {
-                //Procesamos
+                $this->processData();
             }
         }
-
         $this->prepareViewData();
-
-
         Renderer::render("maintenance/products/category", $this->viewData);
     }
 
@@ -155,10 +155,22 @@ class Category extends PublicController
                 "Trying to post without parameter ESTADO on body"
             );
         }
+        if (!isset($_POST["xsrtoken"])) {
+            $this->throwError(
+                "Something went wrong, try again.",
+                "Trying to post without parameter XSRTOKEN on body"
+            );
+        }
         if (intval($_POST["id"]) !== $this->viewData["id"]) {
             $this->throwError(
                 "Something went wrong, try again.",
                 "Trying to post with inconsistent parameter ID value has: " . $this->viewData["id"] . " recieved: " . $_POST["id"]
+            );
+        }
+        if ($_POST["xsrtoken"] !==  $_SESSION[$this->name . "-xsrtoken"]) {
+            $this->throwError(
+                "Something went wrong, try again.",
+                "Trying to post with inconsistent parameter XSRToken value has: " . $_SESSION[$this->name . "-xsrtoken"] . " recieved: " . $_POST["xsrtoken"]
             );
         }
 
@@ -171,7 +183,7 @@ class Category extends PublicController
         if (Validators::IsEmpty($this->viewData["categoria"])) {
             $this->innerError("categoria", "This field is required.");
         }
-        if (count($this->viewData["categoria"]) > 255) {
+        if (strlen($this->viewData["categoria"]) > 255) {
             $this->innerError("categoria", "Value is too long. Maximun allowed 255 character.");
         }
         if (!in_array($this->viewData["estado"], $this->status)) {
@@ -179,6 +191,43 @@ class Category extends PublicController
         }
 
         return !(count($this->viewData["errors"]) > 0);
+    }
+
+    private function processData()
+    {
+        $mode = $this->viewData["mode"];
+        switch ($mode) {
+            case "INS":
+                if (CategoriesDAO::newCategory(
+                    $this->viewData["categoria"],
+                    $this->viewData["estado"]
+                ) > 0) {
+                    Site::redirectToWithMsg(LIST_URL, "Category created successfuly");
+                } else {
+                    $this->innerError("global", "Something wrong happend to save the new Category.");
+                }
+                break;
+            case "UPD":
+                if (CategoriesDAO::updateCategory(
+                    $this->viewData["id"],
+                    $this->viewData["categoria"],
+                    $this->viewData["estado"]
+                ) > 0) {
+                    Site::redirectToWithMsg(LIST_URL, "Category updated successfuly");
+                } else {
+                    $this->innerError("global", "Something wrong happend while updating the category.");
+                }
+                break;
+            case "DEL":
+                if (CategoriesDAO::deleteCategory(
+                    $this->viewData["id"]
+                ) > 0) {
+                    Site::redirectToWithMsg(LIST_URL, "Category deleted successfuly");
+                } else {
+                    $this->innerError("global", "Something wrong happend while deleting the category.");
+                }
+                break;
+        }
     }
     private function prepareViewData()
     {
@@ -188,5 +237,23 @@ class Category extends PublicController
         );
 
         $this->viewData['selected' . $this->viewData["estado"]] = "selected";
+
+        if (count($this->viewData["errors"]) > 0) {
+            foreach ($this->viewData["errors"] as $scope => $errorsArray) {
+                $this->viewData["errors_" . $scope] = $errorsArray;
+            }
+        }
+
+        if ($this->viewData["mode"] === "DSP") {
+            $this->viewData["cancelLabel"] = "Back";
+            $this->viewData["showConfirm"] = false;
+        }
+
+        if ($this->viewData["mode"] === "DSP" || $this->viewData["mode"] === "DEL") {
+            $this->viewData["readonly"] = "readonly";
+        }
+        $this->viewData["timestamp"] = time();
+        $this->viewData["xsrtoken"] = hash("sha256", json_encode($this->viewData));
+        $_SESSION[$this->name . "-xsrtoken"] = $this->viewData["xsrtoken"];
     }
 }
