@@ -68,6 +68,12 @@ class Product extends PublicController
 
   private function validateData()
   {
+
+    if ($this->mode ==="DEL"){
+      $this -> product ["productId"] = intval($_POST["productId"] ?? "");
+      return true;
+    }
+
     $errors = [];
     $this->product_xss_token = $_POST["product_xss_token"] ?? "";
     $this->product["productId"] = intval($_POST["productId"] ?? "");
