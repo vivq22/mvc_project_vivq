@@ -15,6 +15,12 @@
       "id": "Menu_Products",
       "nav_url": "index.php?page=Products_Products",
       "nav_label":"<i class=\"fas fa-table\"></i>&nbsp;WW Productos"
+    },
+
+    {
+      "id": "Crud_Generator",
+      "nav_url": "index.php?page=Crud_Generator",
+      "nav_label":"<i class=\"fas fa-cogs\"></i>&nbsp;Generador CRUD"
     }
   ],
   "private": [
