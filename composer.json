@@ -1,5 +1,11 @@
 {
     "autoload": {
       "psr-4": {"":"src/"}
+    },
+    "require": {
+        "wikimedia/less.php": "*"
+    },
+    "scripts": {
+      "less": "lessc ./public/css_src/style.less ./public/css/appstyle.css"
     }
 }

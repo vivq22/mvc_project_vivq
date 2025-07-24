@@ -7,10 +7,10 @@
     <h2>{{productName}}</h2>
     <p>{{productDescription}}</p>
     <span class="price">{{productPrice}}</span>
-    <span class="stock">{{productStock}}</span>
+    <span class="stock">{{productStock}} <i class="fa-solid fa-cubes"></i></span>
     <form action="index.php?page=index" method="post">
         <input type="hidden" name="productId" value="{{productId}}">
-        <button type="submit" name="addToCart" class="add-to-cart">Agregar al Carrito</button>
+        <button type="submit" name="addToCart" class="add-to-cart"><i class="fa-solid fa-cart-plus"></i> Agregar al Carrito</button>
     </form>
   </div>
   {{endfor products}}
