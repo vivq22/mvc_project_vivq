@@ -18,6 +18,12 @@ class Validators {
         return preg_match("/^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8,32}$/", $valor) && true;
     }
 
+    
+    static public function IsValidXSS($valor)
+    {
+        return preg_match("/^[a-zA-Z0-9\-_]+$/", $valor) && true;
+    }
+
     private function __construct()
     {
         

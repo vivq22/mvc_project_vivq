@@ -21,6 +21,21 @@
       "id": "Crud_Generator",
       "nav_url": "index.php?page=Crud_Generator",
       "nav_label":"<i class=\"fas fa-cogs\"></i>&nbsp;Generador CRUD"
+    },
+    {
+      "id": "Menu_Usuarios",
+      "nav_url": "index.php?page=Usuarios_UsuariosList",
+      "nav_label": "<i class=\"fas fa-table\"></i>&nbsp;WW Usuarios"
+    },
+    {
+      "id": "Menu_Roles",
+      "nav_url": "index.php?page=Roles_RolesList",
+      "nav_label": "<i class=\"fas fa-table\"></i>&nbsp;WW Roles"
+    },
+    {
+      "id": "Menu_Funciones",
+      "nav_url": "index.php?page=Funciones_FuncionesList",
+      "nav_label": "<i class=\"fas fa-table\"></i>&nbsp;WW Funciones"
     }
   ],
   "private": [

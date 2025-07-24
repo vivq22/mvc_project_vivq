@@ -40,6 +40,7 @@ abstract class PublicController implements IController
                 \Utilities\Nav::setNavContext();
             }
         }
+        $this->getCartCounter();
     }
     /**
      * Return name of instantiated class
@@ -58,6 +59,18 @@ abstract class PublicController implements IController
     protected function isPostBack()
     {
         return $_SERVER["REQUEST_METHOD"] == "POST";
+    }
+
+     protected function getCartCounter()
+    {
+        if (\Utilities\Security::isLogged()) {
+            $cartItems = \Dao\Cart\Cart::getAuthCart(\Utilities\Security::getUserId());
+            \Utilities\Context::setContext("CART_ITEMS", count($cartItems));
+        } else {
+            $annonCod = \Utilities\Cart\CartFns::getAnnonCartCode();
+            $cartItems = \Dao\Cart\Cart::getAnonCart($annonCod);
+            \Utilities\Context::setContext("CART_ITEMS", count($cartItems));
+        }
     }
 
 }
