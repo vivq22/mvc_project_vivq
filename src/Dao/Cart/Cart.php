@@ -104,8 +104,13 @@ class Cart extends \Dao\Table
         $validateSql = "SELECT * from carretillaanon where anoncod = :anoncod and productId = :productId";
         $producto = self::obtenerUnRegistro($validateSql, ["anoncod" => $anonCod, "productId" => $productId]);
         if ($producto) {
-            $updateSql = "UPDATE carretillaanon set crrctd = crrctd + 1 where anoncod = :anoncod and productId = :productId";
-            return self::executeNonQuery($updateSql, ["anoncod" => $anonCod, "productId" => $productId]);
+            if ($producto["crrctd"] + $amount <= 0) {
+                $deleteSql = "DELETE from carretillaanon where usercod = :usercod and productId = :productId;";
+                return self::executeNonQuery($deleteSql, ["anoncod" => $anonCod, "productId" => $productId]);
+            } else {
+                $updateSql = "UPDATE carretillaanon set crrctd = crrctd + :amount where anoncod = :anoncod and productId = :productId";
+                return self::executeNonQuery($updateSql, ["anoncod" => $anonCod, "amount" => $amount, "productId" => $productId]);
+            }
         } else {
             return self::executeNonQuery(
                 "INSERT INTO carretillaanon (anoncod, productId, crrctd, crrprc, crrfching) VALUES (:anoncod, :productId, :crrctd, :crrprc, NOW());",
@@ -133,8 +138,13 @@ class Cart extends \Dao\Table
         $validateSql = "SELECT * from carretilla where usercod = :usercod and productId = :productId";
         $producto = self::obtenerUnRegistro($validateSql, ["usercod" => $usercod, "productId" => $productId]);
         if ($producto) {
-            $updateSql = "UPDATE carretilla set crrctd = crrctd + 1 where usercod = :usercod and productId = :productId";
-            return self::executeNonQuery($updateSql, ["usercod" => $usercod, "productId" => $productId]);
+            if ($producto["crrctd"] + $amount <= 0) {
+                $deleteSql = "DELETE from carretilla where usercod = :usercod and productId = :productId;";
+                return self::executeNonQuery($deleteSql, ["usercod" => $usercod, "productId" => $productId]);
+            } else {
+                $updateSql = "UPDATE carretilla set crrctd = crrctd + :amount where usercod = :usercod and productId = :productId";
+                return self::executeNonQuery($updateSql, ["usercod" => $usercod, "amount" => $amount, "productId" => $productId]);
+            }
         } else {
             return self::executeNonQuery(
                 "INSERT INTO carretilla (usercod, productId, crrctd, crrprc, crrfching) VALUES (:usercod, :productId, :crrctd, :crrprc, NOW());",
